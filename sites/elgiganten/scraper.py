@@ -51,7 +51,6 @@ def search_product_list(interval_count = 1, interval_hours = 6):
     tracker_log = pd.DataFrame()
     now = datetime.now().strftime('%Y-%m-%d %Hh%Mm')
     interval = 0 # counter reset
-    
     while interval < interval_count:
         for x, url in enumerate(prod_tracker_URLS):
             #Get the website
@@ -78,13 +77,13 @@ def search_product_list(interval_count = 1, interval_hours = 6):
                             stock = 0
 
                         log = pd.DataFrame({
-                            'date': now.replace("h", ":").replace("m", ""),
-                            'company': str(prod_tracker.company[x]), # this code comes from the TRACKER_PRODUCTS file
-                            'title': str(title),
-                            'price': int(price),
-                            'stock': int(stock),
-                            'url': str(url)
-                            },index=[x])
+                        'date': now.replace("h", ":").replace("m", ""),
+                        'company': str(prod_tracker.company[x]), # this code comes from the TRACKER_PRODUCTS file
+                        'title': str(title),
+                        'price': int(price),
+                        'stock': int(stock),
+                        'url': str(url)
+                        },index=[x])
 
                         tracker_log = tracker_log.append(log)
                         print("\tAdded " + prod_tracker.company[x] +' > ' + title)           
@@ -100,17 +99,16 @@ def search_product_list(interval_count = 1, interval_hours = 6):
         interval += 1# counter update
         
         sleep(interval_hours*1*1)
-        print('\t> End of interval '+ str(interval) + "\n")
+        print('\t> End of interval '+ str(interval))
     
     # after the run, checks last search history record, and appends this run results to it, saving a new file
-    #last_search = glob("search_history/*.xlsx")[-1] # path to file in the folder
-    #search_hist = pd.read_excel(last_search)
+    #last_search = glob(os.path.join(os.path.dirname(__file__), 'search_history', '*.xlsx'))[-1] # path to file in the folder
+    #earch_hist = pd.read_excel(last_search)
     
     #final_df = search_hist.append(tracker_log, sort=False)    
-    #final_df.to_excel('search_history/SEARCH_HISTORY_{}.xlsx'.format(now), index=False)
+    #final_df.to_excel(os.path.join(os.path.dirname(__file__), 'search_history', 'SEARCH_HISTORY_{}.xlsx').format(now), index=False)
 
-    print(':==== [SCRAPE COMPLETE] ====:')
-    driver.close()
+    print(':==== [SCRAPE COMPLETE] ====:\n')
     return tracker_log
 
 def check_exists_by_xpath(xpath):

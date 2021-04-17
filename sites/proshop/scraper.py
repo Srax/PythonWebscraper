@@ -103,7 +103,7 @@ def search_product_list(interval_count = 1, interval_hours = 6):
         interval += 1# counter update
         
         sleep(interval_hours*1*1)
-        print('\t> End of interval '+ str(interval) + "\n")
+        print('\t> End of interval '+ str(interval))
     
     # after the run, checks last search history record, and appends this run results to it, saving a new file
     #last_search = glob("search_history/*.xlsx")[-1] # path to file in the folder
@@ -112,7 +112,7 @@ def search_product_list(interval_count = 1, interval_hours = 6):
     #final_df = search_hist.append(tracker_log, sort=False)    
     #final_df.to_excel('search_history/SEARCH_HISTORY_{}.xlsx'.format(now), index=False)
 
-    print(':==== [SCRAPE COMPLETE] ====:')
+    print(':==== [SCRAPE COMPLETE] ====:\n')
     return tracker_log
 
 def check_exists_by_xpath(xpath):

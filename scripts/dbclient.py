@@ -51,9 +51,9 @@ def check_if_record_exists_in_db_by_query(client, collection_name, query):
         collection = db["data"]
 
         mydoc = collection.find_one(query)
+        print(":==== [SAVE COMPLETE] ====:")
         return mydoc
 
-        print(":==== [SAVE COMPLETE] ====:")
     except :
         logging.warning("Err! Failed to saved to database")
         print("Err! Failed to saved to database")
