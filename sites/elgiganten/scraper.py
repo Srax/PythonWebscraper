@@ -19,7 +19,9 @@ options.add_argument('--ignore-certificate-errors')
 options.add_argument('--incognito')
 options.add_argument('--headless')
 options.add_argument('log-level=3')
+options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
 driver = webdriver.Chrome(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'drivers', 'chromedriver.exe')), chrome_options=options)
+driver.delete_all_cookies()
 
 def search_product_list(interval_count = 1, interval_hours = 6):
     print(":==== [SCRAPING A TOTAL OF " + str(interval_count) + " TIMES] ====:")
