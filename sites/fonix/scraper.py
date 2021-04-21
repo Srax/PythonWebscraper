@@ -14,16 +14,16 @@ import sys, re, os
 
 def search_product_list(interval_count = 1, interval_hours = 6):
     try:
-        PROXY = FreeProxy(rand=True).get()
-        webdriver.DesiredCapabilities.CHROME['proxy'] = {
-            "httpProxy":PROXY,
-            "ftpProxy":PROXY,
-            "sslProxy":PROXY,
-            "noProxy":None,
-            "proxyType":"MANUAL",
-            "class":"org.openqa.selenium.Proxy",
-            "autodetect":False
-        }
+        #PROXY = '145.40.68.155:80'
+        #webdriver.DesiredCapabilities.CHROME['proxy'] = {
+        #    "httpProxy":PROXY,
+        #    "ftpProxy":PROXY,
+        #    "sslProxy":PROXY,
+        #    "noProxy":None,
+        #    "proxyType":"MANUAL",
+        #    "class":"org.openqa.selenium.Proxy",
+        #    "autodetect":False
+        #}
 
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-certificate-errors')
@@ -36,7 +36,7 @@ def search_product_list(interval_count = 1, interval_hours = 6):
 
 
         print(":==== [SCRAPING A TOTAL OF " + str(interval_count) + " TIMES] ====:")
-        print(":==== [PROXY IP: ", PROXY, " ] ====:")
+        #print(":==== [PROXY IP: " + str(PROXY) + "] ====:")
 
         """
         This function lods a csv file named TRACKER_PRODUCTS.csv, with headers: [url, code, buy_below]
@@ -79,7 +79,7 @@ def search_product_list(interval_count = 1, interval_hours = 6):
                             except:
                                 title = None
                             try:    
-                                price = int(driver.find_element_by_xpath("//div[@class='hidden-product-price']").get_attribute("textContent").replace("\n", "").replace("\t", "").replace("DKK","").replace(",","").replace("-","").strip())
+                                price = int(driver.find_element_by_xpath("//div[@class='hidden-product-price']").get_attribute("textContent").replace("\n", "").replace("\t", "").replace("DKK","").replace(",","").replace("-","").replace(".", "").strip())
                             except:
                                 price = 0
                             

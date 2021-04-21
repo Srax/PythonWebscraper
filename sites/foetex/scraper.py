@@ -14,11 +14,11 @@ import sys, re, os
 
 def search_product_list(interval_count = 1, interval_hours = 6):
     try:
-        #PROXY = FreeProxy(rand=True).get()
+        #PROXY = '145.40.68.155:80'
         #webdriver.DesiredCapabilities.CHROME['proxy'] = {
-        #    "httpProxy":'145.40.68.155:80',
-        #    "ftpProxy":'145.40.68.155:80',
-        #    "sslProxy":'145.40.68.155:80',
+        #    "httpProxy":PROXY,
+        #    "ftpProxy":PROXY,
+        #    "sslProxy":PROXY,
         #    "noProxy":None,
         #    "proxyType":"MANUAL",
         #    "class":"org.openqa.selenium.Proxy",
@@ -31,9 +31,8 @@ def search_product_list(interval_count = 1, interval_hours = 6):
         options.add_argument('--headless')
         options.add_argument('log-level=3')
         options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
-        driver = webdriver.Chrome(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'drivers', 'chromedriver.exe')), options=options)
+        driver = webdriver.Chrome(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'drivers', 'chromedriver.exe')), chrome_options=options)
         driver.delete_all_cookies()
-
 
 
         print(":==== [SCRAPING A TOTAL OF " + str(interval_count) + " TIMES] ====:")
@@ -72,44 +71,48 @@ def search_product_list(interval_count = 1, interval_hours = 6):
                 #Get the website
                 try:
                     driver.get(url)
-                    sleep(1)
                     try:
-                        four_o_four = check_exists_by_xpath("//div[contains(@class, 'not-found-image')]", driver)
+                        four_o_four = check_exists_by_xpath("//div[@class='not-found-page']", driver)
                         if(four_o_four is False):
                             try:
-                                title = driver.find_element_by_xpath("//h1[@class='product__headline d-block']").text
+                                title = driver.find_element_by_xpath("//h1[@class='product__headline d-block']").get_attribute("innerText")
                             except:
                                 title = None
-
                             try:    
-                                price = round(float(driver.find_element_by_xpath("//div[@class='price']//div[@class='after-price flex']").text.replace(".", "").replace(",", "").replace("-", "").strip()))
+                                price = int(driver.find_element_by_xpath("//div[@class='d-flex price__container']//div//div").get_attribute("textContent").replace("\n", "").replace("\t", "").replace("DKK","").replace(",","").replace("-","").replace(".","").strip())
+                                #price = int(driver.find_element_by_xpath("//div[@class='d-flex price__container']//div//div[@class='after-price flex']").get_attribute("textContent").replace("\n", "").replace("\t", "").replace("DKK","").replace(",","").replace("-","").strip())
                             except:
                                 price = 0
-
+                            
+                            # Check stock
                             try:
-                                stock = driver.find_elements_by_class_name("stock-status__headline")[1].text
-                                s = [float(s) for s in re.findall(r'-?\d+\.?\d*', stock)]
-                                stock = sum(s[0])
+                                stock = driver.find_elements_by_xpath("//div[contains(@class, 'stock-status__headline')]")
+                                stock = stock[1].get_attribute("textContent")
+                                s = [int(s) for s in re.findall(r'-?\d+\.?\d*', stock)]
+                                stock = round(sum(s))
                             except:
                                 stock = 0
+
 
                             log = pd.DataFrame({
                                 'date': now.replace("h", ":").replace("m", ""),
                                 'company': str(prod_tracker.company[x]), # this code comes from the TRACKER_PRODUCTS file
-                                'url': str(url),
                                 'title': str(title),
                                 'price': int(price),
-                                'stock': int(stock)
+                                'stock': int(stock),
+                                'url': str(url)
                                 },index=[x])
+
                             tracker_log = tracker_log.append(log)
-                            print("\tAdded " + prod_tracker.company[x] +' > ' + title)       
+                            print("\tAdded " + prod_tracker.company[x] +' > ' + title)           
+                            sleep(1)
                         else:
                             print("\tProduct not found...")
 
                     except TimeoutException:
                         print("Err: Site couldn't be reached...")
                 except:
-                    print("Err: Something went wrong...")
+                    print("Err: Something wen't wrong...")
             
             interval += 1# counter update
             

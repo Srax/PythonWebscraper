@@ -6,7 +6,6 @@ from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from datetime import datetime
-from fp.fp import FreeProxy
 from time import sleep
 from glob import glob
 import pandas as pd
@@ -15,11 +14,10 @@ import sys, re, os
 
 def search_product_list(interval_count = 1, interval_hours = 6):
     try:
-        PROXY = FreeProxy(rand=True).get()
         webdriver.DesiredCapabilities.CHROME['proxy'] = {
-            "httpProxy":PROXY,
-            "ftpProxy":PROXY,
-            "sslProxy":PROXY,
+            "httpProxy":'145.40.68.155:80',
+            "ftpProxy":'145.40.68.155:80',
+            "sslProxy":'145.40.68.155:80',
             "noProxy":None,
             "proxyType":"MANUAL",
             "class":"org.openqa.selenium.Proxy",
@@ -36,31 +34,9 @@ def search_product_list(interval_count = 1, interval_hours = 6):
         driver.delete_all_cookies()
 
 
+
         print(":==== [SCRAPING A TOTAL OF " + str(interval_count) + " TIMES] ====:")
-        print(":==== [PROXY IP: ", PROXY, " ] ====:")
-
-        """
-        This function lods a csv file named TRACKER_PRODUCTS.csv, with headers: [url, code, buy_below]
-        It looks for the file under in ./trackers
-        
-        It also requires a file called SEARCH_HISTORY.xslx under the folder ./search_history to start saving the results.
-        An empty file can be used on the first time using the script.
-        
-        Both the old and the new results are then saved in a new file named SEARCH_HISTORY_{datetime}.xlsx
-        This is the file the script will use to get the history next time it runs.
-
-        Parameters
-        ----------
-        interval_count : TYPE, optional
-            DESCRIPTION. The default is 1. The number of iterations you want the script to run a search on the full list.
-        interval_hours : TYPE, optional
-            DESCRIPTION. The default is 6.
-
-        Returns
-        -------
-        New .xlsx file with previous search history and results from current search
-
-        """
+        #print(":==== [PROXY IP: " + str(PROXY) + "] ====:")
         prod_tracker = pd.read_csv(os.path.join(os.path.dirname(__file__), 'trackers', 'TRACKER_PRODUCTS.csv'), sep=';')
         prod_tracker_URLS = prod_tracker.url
         tracker_log = pd.DataFrame()
@@ -115,14 +91,6 @@ def search_product_list(interval_count = 1, interval_hours = 6):
             
             sleep(interval_hours*1*1)
             print('\t> End of interval '+ str(interval))
-        
-        # after the run, checks last search history record, and appends this run results to it, saving a new file
-        #last_search = glob(os.path.join(os.path.dirname(__file__), 'search_history', '*.xlsx'))[-1] # path to file in the folder
-        #earch_hist = pd.read_excel(last_search)
-        
-        #final_df = search_hist.append(tracker_log, sort=False)    
-        #final_df.to_excel(os.path.join(os.path.dirname(__file__), 'search_history', 'SEARCH_HISTORY_{}.xlsx').format(now), index=False)
-
         print(':==== [SCRAPE COMPLETE] ====:\n')
         return tracker_log
     except TimeoutException as ex:
