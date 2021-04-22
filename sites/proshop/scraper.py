@@ -26,16 +26,15 @@ driver.delete_all_cookies()
 
 def search_product_list(interval_count = 1, interval_hours = 6):
     try:
-        #PROXY = '145.40.68.155:80'
-        #webdriver.DesiredCapabilities.CHROME['proxy'] = {
-        #    "httpProxy":PROXY,
-        #    "ftpProxy":PROXY,
-        #    "sslProxy":PROXY,
-        #    "noProxy":None,
-        #    "proxyType":"MANUAL",
-        #    "class":"org.openqa.selenium.Proxy",
-        #    "autodetect":False
-        #}
+        webdriver.DesiredCapabilities.CHROME['proxy'] = {
+            "httpProxy":'23.251.138.105:8080',
+            "ftpProxy":'23.251.138.105:8080',
+            "sslProxy":'23.251.138.105:8080',
+            "noProxy":None,
+            "proxyType":"MANUAL",
+            "class":"org.openqa.selenium.Proxy",
+            "autodetect":False
+        }
 
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-certificate-errors')

@@ -15,6 +15,7 @@ mailing_list = pd.read_csv(os.path.abspath(os.path.join(os.path.dirname(__file__
 
 
 def send_mail_to_all_on_mailing_list(subject, data):
+    print(">>>>> Sending out stock update emails")
     for x, email in enumerate(mailing_list.email):
         message = MIMEMultipart("alternative")
         message["Subject"] = subject

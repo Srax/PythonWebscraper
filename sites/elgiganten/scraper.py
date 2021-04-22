@@ -15,9 +15,9 @@ import sys, re, os
 def search_product_list(interval_count = 1, interval_hours = 6):
     try:
         webdriver.DesiredCapabilities.CHROME['proxy'] = {
-            "httpProxy":'145.40.68.155:80',
-            "ftpProxy":'145.40.68.155:80',
-            "sslProxy":'145.40.68.155:80',
+            "httpProxy":'23.251.138.105:8080',
+            "ftpProxy":'23.251.138.105:8080',
+            "sslProxy":'23.251.138.105:8080',
             "noProxy":None,
             "proxyType":"MANUAL",
             "class":"org.openqa.selenium.Proxy",
