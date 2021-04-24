@@ -95,8 +95,8 @@ def verify_list(thread_number, proxy_list):
             driver = webdriver.Chrome(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'drivers', 'chromedriver.exe')), options=options)
             driver.delete_all_cookies()            
             driver.set_page_load_timeout(timeout)
+            driver.get("https://www.elgiganten.dk/product/pc-tablets/barbar-computer/windows-barbar-computer/262530/lenovo-ideapad-3-14ada05-14-barbar-computer-r34128")
             try:
-                driver.get("https://www.elgiganten.dk/product/pc-tablets/barbar-computer/windows-barbar-computer/262530/lenovo-ideapad-3-14ada05-14-barbar-computer-r34128")
                 #print('[Thread:', thread_number, '] Current IP:', ip)
                 #print('[Thread:', thread_number, '] match:', True if ip == prox.split(':')[0] else False)
                 try:
@@ -111,7 +111,7 @@ def verify_list(thread_number, proxy_list):
                 print('[Thread:', thread_number, '] Proxy timed out: ', e)
             except Exception as ex:
                 print("Unknown Error: ", ex)
-        except Exception as e:
+        except Exception as ex:
             print("Unknown Error: ", ex)
             print('[Thread:', thread_number, '] Proxy failed', proxy)
             print('[Thread:', thread_number, '] Proxy failed', e)
