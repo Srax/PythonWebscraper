@@ -24,7 +24,7 @@ def search_product_list(PROXY_LIST = None):
         if PROXY_LIST is not None:
             PROXY = random.choice(PROXY_LIST)
 
-        print(":==== [ SCRAPING PROSHOP ] ====:")
+        print("\t:==== [ SCRAPING PROSHOP ] ====:")
         """
         This function lods a csv file named TRACKER_PRODUCTS.csv, with headers: [url, code, buy_below]
         It looks for the file under in ./trackers
