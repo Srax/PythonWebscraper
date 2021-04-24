@@ -55,6 +55,5 @@ def countdown(msg, t):
 def start():
     run_repeatedly()
 
-proxy.proxy_health_start()
+#proxy.proxy_health_start()
 start() ## Lets start
-
