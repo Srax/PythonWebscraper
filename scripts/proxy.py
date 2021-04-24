@@ -8,6 +8,7 @@ from selenium import webdriver
 from threading import Thread
 import concurrent.futures
 import threading, time
+import multiprocessing
 import urllib.request
 import urllib.error
 import numpy as np
@@ -95,7 +96,7 @@ def verify_list(thread_number, proxy_list):
             driver = webdriver.Chrome(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'drivers', 'chromedriver.exe')), options=options)
             driver.delete_all_cookies()            
             driver.set_page_load_timeout(timeout)
-            driver.get("https://www.elgiganten.dk/product/pc-tablets/barbar-computer/windows-barbar-computer/262530/lenovo-ideapad-3-14ada05-14-barbar-computer-r34128")
+            driver.get("https://www.proshop.dk/Spillekonsol/Sony-PlayStation-5-Nordic/2831713")
             try:
                 #print('[Thread:', thread_number, '] Current IP:', ip)
                 #print('[Thread:', thread_number, '] match:', True if ip == prox.split(':')[0] else False)
@@ -163,7 +164,12 @@ def proxy_health_setup(number_threads, proxy_l):
         proxy_lists[len(proxy_lists)-1].append(proxy_list[len(proxy_list)-1])
     return proxy_lists
 
-def proxy_health_start(threads, *proxy_list):
+def proxy_health_start(threads = None, *proxy_list):
+    if threads is None:
+        threads = round(multiprocessing.cpu_count() / 2)
+        print(">>>> Running with", threads, "threads" )
+    else:
+        print(">>>> Running with", str(threads), "threads" )
     if proxy_list is not None:
         proxy_list = get_list_of_proxies_by_continent_string("Europe")
     start_time = time.time()
