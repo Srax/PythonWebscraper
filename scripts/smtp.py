@@ -2,15 +2,15 @@ import pandas as pd
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from secrets import sec
+from secrets import keys
 import pandas as pd
 import os
 
 
 
 
-sender_email = sec.smtp_mail
-password = sec.smtp_password
+sender_email = keys.smtp_mail
+password = keys.smtp_password
 mailing_list = pd.read_csv(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'secrets', 'MAILING_LIST.csv')))
 
 

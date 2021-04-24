@@ -1,9 +1,12 @@
 from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
+from selenium.webdriver.support import expected_conditions as EC
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 import random, awoc, socket, time, math
+from fake_useragent import UserAgent
 from selenium import webdriver
 from threading import Thread
 import concurrent.futures
@@ -15,7 +18,7 @@ import numpy as np
 import logging
 import os.path
 
-timeout = 10
+timeout = 30
 good_list = []
 
 
@@ -77,9 +80,9 @@ def verify_list(thread_number, proxy_list):
     for proxy in proxy_list:
         try:
             webdriver.DesiredCapabilities.CHROME['proxy'] = {
-                "httpProxy":proxy,
-                "ftpProxy":proxy,
-                "sslProxy":proxy,
+                "httpProxy": proxy,
+                "ftpProxy": proxy,
+                "sslProxy": proxy,
                 "noProxy":None,
                 "proxyType":"MANUAL",
                 "class":"org.openqa.selenium.Proxy",
@@ -91,23 +94,26 @@ def verify_list(thread_number, proxy_list):
             options.add_argument('--incognito')
             options.add_argument('--headless')
             options.add_argument('log-level=3')
+            ua = UserAgent()
+            user_agent = ua.chrome
             options.add_experimental_option('excludeSwitches', ['enable-logging']) # Supress Selenium "Driver listening on X" message
-            options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
+            options.add_argument(f'user-agent={user_agent}')
+            #options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
+            
             driver = webdriver.Chrome(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'drivers', 'chromedriver.exe')), options=options)
-            driver.delete_all_cookies()            
-            driver.set_page_load_timeout(timeout)
+            driver.delete_all_cookies()
             driver.get("https://www.proshop.dk/Spillekonsol/Sony-PlayStation-5-Nordic/2831713")
             try:
-                #print('[Thread:', thread_number, '] Current IP:', ip)
-                #print('[Thread:', thread_number, '] match:', True if ip == prox.split(':')[0] else False)
-                try:
-                    title = driver.title
-                except:
-                    title = None
-                    
-                if title is not None:
+                 # Wait for the driver to find body with id 'siteContainer'                
+                WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.ID, 'siteContainer')))   
+                four_o_four = check_exists_by_xpath("//div[contains(@id, 'productList')]", driver)
+                captcha = check_exists_by_class_name("cf-captcha-container", driver)
+                if captcha is True:
+                    print('[Thread:', thread_number, '] Proxy reached captcha page: ', e)
+                if four_o_four is False and captcha is False:             
                     print('[Thread:', thread_number, '] Proxy works:', proxy)
-                    working_list.append(proxy)
+                    #working_list.append(proxy)
+                    add_good_proxy_to_file(proxy)
             except TimeoutException as e:
                 print('[Thread:', thread_number, '] Proxy timed out: ', e)
             except Exception as ex:
@@ -188,16 +194,22 @@ def proxy_health_start(threads = None, *proxy_list):
 
     print('[All] Working Proxies:', good_list)
 
-    proxy_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'secrets', 'good_proxies_list.txt'))
-    f = open(proxy_file, 'w+')
-    to_write = ''
-    for i in good_list:
-        to_write += i+'\n'
-    f.write(to_write)
-    f.close()
+    #proxy_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'secrets', 'good_proxies_list.txt'))
+    #f = open(proxy_file, 'w+')
+    #to_write = ''
+    #for i in good_list:
+    #    to_write += i+'\n'
+    #f.write(to_write)
+    #f.close()
     stop_time = time.time()
     print('[{0:.2f} seconds]'.format(stop_time-start_time))
     time.sleep(1)
+
+def add_good_proxy_to_file(proxy):
+    proxy_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'secrets', 'good_proxies_list.txt'))
+    with open(proxy_file, "a") as prox_file:
+        prox_file.write(proxy+'\n')
+        prox_file.close()
 
 
 def remove_proxy_from_good_proxies_list(proxy):
@@ -209,3 +221,18 @@ def remove_proxy_from_good_proxies_list(proxy):
             if line.strip("\n") != proxy:
                 f.write(line)
     print(">>>> Removed", proxy, "from", 'good_proxies_list.txt')
+
+
+def check_exists_by_xpath(xpath, driver):
+    try:
+        driver.find_element_by_xpath(xpath)
+    except NoSuchElementException:
+        return False
+    return True
+
+def check_exists_by_class_name(class_name, driver):
+    try:
+        driver.find_element_by_class_name(class_name)
+    except NoSuchElementException:
+        return False
+    return True

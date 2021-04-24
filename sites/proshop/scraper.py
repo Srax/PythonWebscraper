@@ -146,7 +146,7 @@ def search_product_list(PROXY_LIST = None):
         #final_df.to_excel('search_history/SEARCH_HISTORY_{}.xlsx'.format(now), index=False)
     except Exception as ex:
         ERR_MSGS = ['ERR_PROXY_CONNECTION_FAILE', 'ERR_TUNNEL_CONNECTION_FAILED']        
-        if any(x in ex.msg for x in matches):
+        if any(x in ex.msg for x in ERR_MSGS):
             print("Err: Proxy Failed!")
             remove_proxy_from_good_proxies_list(PROXY)
             PROXY = random.choice(PROXY_LIST)
