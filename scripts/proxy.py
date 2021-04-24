@@ -114,7 +114,7 @@ def verify_list(thread_number, proxy_list):
         except Exception as ex:
             print("Unknown Error: ", ex)
             print('[Thread:', thread_number, '] Proxy failed', proxy)
-            print('[Thread:', thread_number, '] Proxy failed', e)
+            print('[Thread:', thread_number, '] Proxy failed', ex)
         #print('[Thread:', thread_number, '] Working Proxies:', working_list)
         finally:
             driver.quit()
