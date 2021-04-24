@@ -4,21 +4,20 @@ from sites.bilka import scraper as bilka
 from sites.fonix import scraper as fonix
 from sites.foetex import scraper as foetex
 from scripts import dbclient, smtp, proxy
+import threading, sys, os, random, time
 import concurrent.futures
 import pandas as pd
-import threading
-import sys, os
-import random
-import time
+import numpy as np
 
 #proxy.get_random_proxy_from_proxy_list
-def scrape_all_shops():
-    foetex_scraped = foetex.search_product_list(1,1)
-    elgiganten_scraped = elgiganten.search_product_list(1,1)
+def scrape_all_shops(proxy_list):
+    proshop_scraped = proshop.search_product_list(proxy_list)
+    #foetex_scraped = foetex.search_product_list(1,1)
+    #elgiganten_scraped = elgiganten.search_product_list(1,1)
     #bilka_scraped = bilka.search_product_list(1,1)
-    proshop_scraped = proshop.search_product_list(1,1)
-    fonix_scraped = fonix.search_product_list(1,1)
-    return pd.concat([proshop_scraped, elgiganten_scraped, fonix_scraped, foetex_scraped])
+    #fonix_scraped = fonix.search_product_list(1,1)
+    #return pd.concat([proshop_scraped, elgiganten_scraped, fonix_scraped, foetex_scraped])
+    return proshop_scraped
 
 def get_items_in_stock(df):
     if 'stock' in df:
@@ -32,10 +31,11 @@ def compare_dataframes_colums(df1, df2, column_name = ''):
 
 def run_repeatedly():
     print(">>>> Running")
+    proxy_list = list(proxy.get_finished_proxy_file())
     df_scraped_old = pd.DataFrame() # Empty for initiation
     while True:
         sleep_time = random.randrange(150, 300)
-        df_scraped = scrape_all_shops()
+        df_scraped = scrape_all_shops(proxy_list)
         df_instock = get_items_in_stock(df_scraped)
         if(df_instock is not None):
             if(compare_dataframes_colums(df_scraped, df_scraped_old, 'stock') is False):
@@ -53,11 +53,8 @@ def countdown(msg, t):
         t -= 1
 
 def start():
-    try:
-        run_repeatedly()
-    except:
-        print("Bruh")
-    finally:
-        run_repeatedly()
+    run_repeatedly()
 
+proxy.proxy_health_start(6)
 start() ## Lets start
+

@@ -9,7 +9,7 @@ from datetime import datetime
 from time import sleep
 from glob import glob
 import pandas as pd
-import sys, re, os
+import sys, re, os, random
 
 
 def search_product_list(interval_count = 1, interval_hours = 6):

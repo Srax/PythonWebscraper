@@ -10,6 +10,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium import webdriver
 import sys
+import numpy as np
 
 timeout = 15
 good_list = []
@@ -41,7 +42,7 @@ def verify_list(thread_number, proxy_list):
             driver.delete_all_cookies()            
             driver.set_page_load_timeout(timeout)
             try:
-                driver.get("https://www.elgiganten.dk/product/pc-tablets/barbar-computer/windows-barbar-computer/262530/lenovo-ideapad-3-14ada05-14-barbar-computer-r34128")
+                driver.get("https://www.proshop.dk/Skaerm/ASUS-24-Skaerm-ROG-STRIX-XG258Q-AURA-RGB-Sort-1-ms-Adaptive-V-Sync/2617490")
                 #print('[Thread:', thread_number, '] Current IP:', ip)
                 #print('[Thread:', thread_number, '] match:', True if ip == prox.split(':')[0] else False)
                 try:
