@@ -19,6 +19,8 @@ import pandas as pd
 locale.setlocale(locale.LC_NUMERIC,"nl")
 
 timeout = 30
+_PROXY = None
+_PROXY_LIST = None
 
 def search_product_list(PROXY_LIST = None):
     PROXY = None

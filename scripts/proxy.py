@@ -193,14 +193,6 @@ def proxy_health_start(threads = None, *proxy_list):
         x.join()
 
     print('[All] Working Proxies:', good_list)
-
-    #proxy_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'secrets', 'good_proxies_list.txt'))
-    #f = open(proxy_file, 'w+')
-    #to_write = ''
-    #for i in good_list:
-    #    to_write += i+'\n'
-    #f.write(to_write)
-    #f.close()
     stop_time = time.time()
     print('[{0:.2f} seconds]'.format(stop_time-start_time))
     time.sleep(1)
