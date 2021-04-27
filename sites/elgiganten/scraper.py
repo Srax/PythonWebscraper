@@ -35,27 +35,20 @@ def start(PROXY_LIST = None):
         _PROXY_LIST = PROXY_LIST
         _PROXY = random.choice(PROXY_LIST)
 
-    with Progress_Slider('Scraiping Elgiganten', max=len(prod_tracker_URLS)) as slider:
+    with Progress_Slider('Scraping Elgiganten', max=len(prod_tracker_URLS)) as slider:
         for index, url in enumerate(prod_tracker_URLS):
             try:
                 driver = driver_setup(_PROXY)
-                print(">>>>>>>>>>>>>>>>>>", _PROXY)
                 data = scrape(url, driver)
                 if(data is not None):
                     data["company"] = prod_tracker.company[index]
                     data.set_index("company", inplace=True)
                     tracker_log = tracker_log.append(data)
-            except TimeoutException as ex:
-                remove_proxy_from_good_proxies_list(_PROXY)
-                _PROXY = random.choice(_PROXY_LIST)
-                logging.error(ex)
-                return None    
             except Exception as ex:
-                if "ERR_PROXY_CONNECTION_FAILED" in str(ex.msg):
-                    remove_proxy_from_good_proxies_list(_PROXY)
+                remove_proxy_from_good_proxies_list(_PROXY)
+                if _PROXY_LIST is not None:
                     _PROXY = random.choice(_PROXY)
-                    logging.error(ex)
-                    return None
+                logging.error(ex)
                 return None
             finally:
                 slider.next()
@@ -96,17 +89,11 @@ def scrape(url, driver):
             return pd.DataFrame(data=scraped_data, index=[0])
         else:
             return None
-    except TimeoutException as ex:
-        remove_proxy_from_good_proxies_list(_PROXY)
-        _PROXY = random.choice(_PROXY_LIST)
-        logging.error(ex)
-        return None    
     except Exception as ex:
-        if "ERR_PROXY_CONNECTION_FAILED" in str(ex.msg):
-            remove_proxy_from_good_proxies_list(_PROXY)
-            _PROXY = random.choice(_PROXY_LIST)
-            logging.error(ex)
-            return None
+        remove_proxy_from_good_proxies_list(_PROXY)
+        if _PROXY_LIST is not None:
+            _PROXY = random.choice(_PROXY)
+        logging.error(ex)
         return None
 
 def driver_setup(PROXY = None):
@@ -121,7 +108,7 @@ def driver_setup(PROXY = None):
     options = webdriver.ChromeOptions()
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--incognito')
-    #options.add_argument('--headless')
+    options.add_argument('--headless')
     options.add_argument('log-level=3')
     ua = UserAgent()
     user_agent = ua.chrome

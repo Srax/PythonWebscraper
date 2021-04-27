@@ -14,14 +14,12 @@ logging.basicConfig(filename='error.log', encoding='utf-8', level=logging.ERROR)
 
 #proxy.get_random_proxy_from_proxy_list
 def scrape_all_shops(proxy_list):
-    #proshop_scraped = proshop.search_product_list(None)
+    proshop_scraped = proshop.start(None)
     #foetex_scraped = foetex.search_product_list(1,1)
-    elgiganten_scraped = elgiganten.start(proxy_list)
+    elgiganten_scraped = elgiganten.start(None)
     #bilka_scraped = bilka.search_product_list(1,1)
     #fonix_scraped = fonix.search_product_list(1,1)
-    #return pd.concat([proshop_scraped, elgiganten_scraped, fonix_scraped, foetex_scraped])
-    #elgiganten_new = elgigantennn.search_product_list()
-    return elgiganten_scraped
+    return pd.concat([proshop_scraped, elgiganten_scraped])
 
 def get_items_in_stock(df):
     if 'stock' in df:
@@ -31,28 +29,23 @@ def get_items_in_stock(df):
     return None
 
 def compare_dataframes_colums(df1, df2, column_name = ''):
-    try:
-        df1[column_name].equals(df2[column_name])
-    except Exception:
-        return False
-    return True
+    return df1[column_name].equals(df2[column_name])
 
 def run_repeatedly():
     print(">>>> Running")
     proxy_list = list(proxy.get_finished_proxy_file())
-    df_scraped_old = pd.DataFrame() # Empty for initiation
-
-    count = 0
+    df_scraped_old = pd.DataFrame(data={'title': "test",'price': 0,'stock': 0,'date': "time",'url':'fake_url'}, index=[0]) # Empty for initiation'df_instock = get_items_in_stock(df_scraped)
     while True:
-        sleep_time = random.randrange(150, 300)
+        sleep_time = random.randrange(1, 5)
         df_scraped = scrape_all_shops(proxy_list)
         df_instock = get_items_in_stock(df_scraped)
         if df_instock is not None:
-            if compare_dataframes_colums(df_scraped, df_scraped_old, 'stock') is False:
+            s = compare_dataframes_colums(df_scraped, df_scraped_old, 'stock')
+            if s is False:
                 #smtp.send_mail_to_all_on_mailing_list("Playstation 5 stock update!", df_instock)
-                print("Its back in stock lol")
+                print("\t>>>>>>>>>>>>>>>>>>> Its back in stock lol")
+            df_instock_old = df_scraped.copy()
         df_scraped_old = df_scraped.copy()
-        print(df_scraped)
         countdown("> Repeating in: ", sleep_time)
 
 def countdown(msg, t):    

@@ -212,7 +212,7 @@ def remove_proxy_from_good_proxies_list(proxy):
         for line in lines:
             if line.strip("\n") != proxy:
                 f.write(line)
-    print(">>>> Removed", proxy, "from", 'good_proxies_list.txt')
+    logging.error("Removed" + str(proxy) + "from good_proxies_list.txt")
 
 
 def check_exists_by_xpath(xpath, driver):

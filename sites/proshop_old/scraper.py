@@ -19,8 +19,6 @@ import pandas as pd
 locale.setlocale(locale.LC_NUMERIC,"nl")
 
 timeout = 30
-_PROXY = None
-_PROXY_LIST = None
 
 def search_product_list(PROXY_LIST = None):
     PROXY = None
@@ -74,7 +72,7 @@ def search_product_list(PROXY_LIST = None):
         options.add_argument('log-level=3')
         ua = UserAgent()
         user_agent = ua.chrome
-        #options.add_experimental_option('excludeSwitches', ['enable-logging']) # Supress Selenium "Driver listening on X" message
+        options.add_experimental_option('excludeSwitches', ['enable-logging']) # Supress Selenium "Driver listening on X" message
         options.add_argument(f'user-agent={user_agent}')
         #options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
         
