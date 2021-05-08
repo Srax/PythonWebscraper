@@ -43,7 +43,7 @@ def run_repeatedly():
                 smtp.send_mail_to_all_on_mailing_list("Playstation 5 stock update!", df_instock)
             df_instock_old = df_scraped.copy()
         df_scraped_old = df_scraped.copy()
-        print("\n", df_scraped)
+        print("\n", df_scraped, "\n")
         countdown("> Repeating in: ", sleep_time)
 
 def countdown(msg, t):    
