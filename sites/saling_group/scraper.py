@@ -35,7 +35,7 @@ def start(PROXY_LIST = None):
         _PROXY_LIST = PROXY_LIST
         _PROXY = random.choice(PROXY_LIST)
 
-    with Progress_Slider('Scraping Fonix\t', max=len(prod_tracker_URLS)) as slider:
+    with Progress_Slider('Scraping Saling Group\t', max=len(prod_tracker_URLS)) as slider:
         for index, url in enumerate(prod_tracker_URLS):
             try:
                 driver = driver_setup(_PROXY)
@@ -62,24 +62,21 @@ def scrape(url, driver):
         driver.get(url)
         soup = BeautifulSoup(driver.page_source, 'lxml')
 
-        loader = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, "product-view")))
+        loader = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.ID, 'product-view')))
 
         if loader is not None:
             try:
-                title = soup.find("div", {"class":"top-product-data"}).find("h2").text
+                title = soup.find("h1", {"class": "product__headline"}).text
             except:
                 title = None
             try:
-                price = extract_integer_from_text(soup.find("div", {"class":"overview-product-price"}).find("div", {"class": "product-price"}).text.replace("\xa0", "").replace(",-", "").replace("\n", "").replace(".", "").strip())
+                price = round(float(locale.atof(soup.find("div", {"class": "price__container"}).find("div", {"class": "after-price flex"}).text.replace(",-", "").replace("\n", "").strip())))
             except:
                 price = 0
             try:
-                stockList = soup.find("div", {"class": "inner-stock-circles"})
-                stockListTextItems = stockList.findAll("span", {"class" : "stock-title"})
-                stock = 0
-                for x in stockListTextItems:
-                    p = extract_integer_from_text(x.text.replace("stk.", "").strip())
-                    stock = stock + int(p)
+                stockList = soup.findAll("div", {"class":"stock-status__headline"})
+                stockList = stockList[1].text.replace(".", "").replace("stk", "").replace("+", "").strip()
+                stock = round(sum(extract_integer_from_text(stockList)))
             except:
                 stock = 0
 
@@ -95,8 +92,7 @@ def scrape(url, driver):
         else:
             return None
     except Exception as ex:
-        if _PROXY is not None:
-            remove_proxy_from_good_proxies_list(_PROXY)
+        remove_proxy_from_good_proxies_list(_PROXY)
         if _PROXY_LIST is not None:
             _PROXY = random.choice(_PROXY)
         logging.error(ex)

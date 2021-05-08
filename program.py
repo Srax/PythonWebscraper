@@ -1,8 +1,7 @@
 from sites.proshop import scraper as proshop
 from sites.elgiganten import scraper as elgiganten
-from sites.bilka import scraper as bilka
+from sites.saling_group import scraper as saling
 from sites.fonix import scraper as fonix
-from sites.foetex import scraper as foetex
 from scripts import dbclient, smtp, proxy
 import threading, sys, os, random, time
 import concurrent.futures
@@ -15,11 +14,10 @@ logging.basicConfig(filename='error.log', encoding='utf-8', level=logging.ERROR)
 #proxy.get_random_proxy_from_proxy_list
 def scrape_all_shops(proxy_list):
     proshop_scraped = proshop.start(None)
-    #foetex_scraped = foetex.search_product_list(1,1)
     elgiganten_scraped = elgiganten.start(None)
-    #bilka_scraped = bilka.search_product_list(1,1)
-    #fonix_scraped = fonix.search_product_list(1,1)
-    return pd.concat([proshop_scraped, elgiganten_scraped])
+    saling_scraped = saling.start(None)
+    fonix_scraped = fonix.start(None)
+    return pd.concat([proshop_scraped, elgiganten_scraped, saling_scraped, fonix_scraped])
 
 def get_items_in_stock(df):
     if 'stock' in df:
