@@ -40,8 +40,7 @@ def run_repeatedly():
         if df_instock is not None:
             s = compare_dataframes_colums(df_scraped, df_scraped_old, 'stock')
             if s is False:
-                #smtp.send_mail_to_all_on_mailing_list("Playstation 5 stock update!", df_instock)
-                print("\t>>>>>>>>>>>>>>>>>>> Its back in stock lol")
+                smtp.send_mail_to_all_on_mailing_list("Playstation 5 stock update!", df_instock)
             df_instock_old = df_scraped.copy()
         df_scraped_old = df_scraped.copy()
         print(df_scraped)
