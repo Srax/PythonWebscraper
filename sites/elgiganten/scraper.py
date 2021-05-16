@@ -35,7 +35,7 @@ def start(PROXY_LIST = None):
         _PROXY_LIST = PROXY_LIST
         _PROXY = random.choice(PROXY_LIST)
 
-    with Progress_Slider('Scraping Elgiganten\t', max=len(prod_tracker_URLS)) as slider:
+    with Progress_Slider('Elgiganten\t\t', max=len(prod_tracker_URLS)) as slider:
         for index, url in enumerate(prod_tracker_URLS):
             try:
                 driver = driver_setup(_PROXY)
