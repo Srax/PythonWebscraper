@@ -1,20 +1,13 @@
-from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from scripts.proxy import remove_proxy_from_good_proxies_list
-from selenium.webdriver.common.proxy import Proxy, ProxyType
 from progress.bar import Bar as Progress_Slider
 from selenium.webdriver.common.by import By
 from fake_useragent import UserAgent
 from selenium import webdriver
 from datetime import datetime
 from bs4 import BeautifulSoup
-from fp.fp import FreeProxy
-from time import sleep
-from glob import glob
-import numpy as np
-import sys, re, os, locale, random
+import re, os, locale, random
 import logging
 import pandas as pd
 
@@ -35,7 +28,7 @@ def start(PROXY_LIST = None):
         _PROXY_LIST = PROXY_LIST
         _PROXY = random.choice(PROXY_LIST)
 
-    with Progress_Slider('Fonix\t\t\t', max=len(prod_tracker_URLS)) as slider:
+    with Progress_Slider('Coolshop\t\t', max=len(prod_tracker_URLS)) as slider:
         for index, url in enumerate(prod_tracker_URLS):
             try:
                 driver = driver_setup(_PROXY)
@@ -62,29 +55,25 @@ def scrape(url, driver):
         driver.get(url)
         soup = BeautifulSoup(driver.page_source, 'lxml')
 
-        loader = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, "product-view")))
+        loader = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'thing-header')))
 
         if loader is not None:
             try:
-                title = soup.find("div", {"class":"top-product-data"}).find("h2").text
+                title = soup.find("div", {"class": "thing-header"}).text.replace("\n", "").strip()
             except:
                 title = None
             try:
-                price = extract_integer_from_text(soup.find("div", {"class":"overview-product-price"}).find("div", {"class": "product-price"}).text.replace("\xa0", "").replace(",-", "").replace("\n", "").replace(".", "").strip())
+                price = round(float(extract_integer_from_text(soup.find("div", {"class": "price-with-decimal-large"}).text)))
             except:
                 price = 0
             try:
-                stockList = soup.find("div", {"class": "inner-stock-circles"})
-                stockListTextItems = stockList.findAll("span", {"class" : "stock-title"})
-                stock = 0
-                for x in stockListTextItems:
-                    p = extract_integer_from_text(x.text.replace("stk.", "").strip())
-                    stock = stock + int(p)
-                stock = True
+                stock = soup.find("div", {"class":"thing-stock-stock-status--in-stock"}).text
+                stock = 1
             except:
-                stock = False
+                stock = 0
 
             now = datetime.now().strftime('%Y-%m-%d %Hh%Mm')
+
             scraped_data = {
                 'title': str(title),
                 'price': int(price),
@@ -96,8 +85,7 @@ def scrape(url, driver):
         else:
             return None
     except Exception as ex:
-        if _PROXY is not None:
-            remove_proxy_from_good_proxies_list(_PROXY)
+        remove_proxy_from_good_proxies_list(_PROXY)
         if _PROXY_LIST is not None:
             _PROXY = random.choice(_PROXY)
         logging.error(ex)

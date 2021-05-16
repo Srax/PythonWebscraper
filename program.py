@@ -2,11 +2,10 @@ from sites.proshop import scraper as proshop
 from sites.elgiganten import scraper as elgiganten
 from sites.saling_group import scraper as saling
 from sites.fonix import scraper as fonix
+from sites.coolshop import scraper as coolshop
 from scripts import dbclient, smtp, proxy
-import threading, sys, os, random, time
-import concurrent.futures
+import random, time
 import pandas as pd
-import numpy as np
 import logging
 
 logging.basicConfig(filename='error.log', encoding='utf-8', level=logging.ERROR)
@@ -17,7 +16,9 @@ def scrape_all_shops(proxy_list):
     elgiganten_scraped = elgiganten.start(None)
     saling_scraped = saling.start(None)
     fonix_scraped = fonix.start(None)
-    return pd.concat([proshop_scraped, elgiganten_scraped, saling_scraped, fonix_scraped])
+    coolshop_scraped = coolshop.start(None)
+    return pd.concat([proshop_scraped, elgiganten_scraped, saling_scraped, fonix_scraped, coolshop_scraped])
+
 
 def get_items_in_stock(df):
     if 'stock' in df:
@@ -34,14 +35,14 @@ def run_repeatedly():
     proxy_list = list(proxy.get_finished_proxy_file())
     df_scraped_old = pd.DataFrame(data={'title': "test",'price': 0,'stock': 0,'date': "time",'url':'fake_url'}, index=[0]) # Empty for initiation'df_instock = get_items_in_stock(df_scraped)
     while True:
-        sleep_time = random.randrange(240, 300)
+        sleep_time = random.randrange(5, 6)
         df_scraped = scrape_all_shops(proxy_list)
         df_instock = get_items_in_stock(df_scraped)
         if df_instock is not None:
             s = compare_dataframes_colums(df_scraped, df_scraped_old, 'stock')
             if s is False:
                 smtp.send_mail_to_all_on_mailing_list("Playstation 5 stock update!", df_instock)
-            df_instock_old = df_scraped.copy()
+                print("\nITS IN STOCK HOLY SHIT!!!!\n")
         df_scraped_old = df_scraped.copy()
         print("\n", df_scraped, "\n")
         countdown("> Repeating in: ", sleep_time)
