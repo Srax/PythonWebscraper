@@ -35,7 +35,7 @@ def run_repeatedly():
     proxy_list = list(proxy.get_finished_proxy_file())
     df_scraped_old = pd.DataFrame(data={'title': "test",'price': 0,'stock': 0,'date': "time",'url':'fake_url'}, index=[0]) # Empty for initiation'df_instock = get_items_in_stock(df_scraped)
     while True:
-        sleep_time = random.randrange(5, 6)
+        sleep_time = random.randrange(45, 60)
         df_scraped = scrape_all_shops(proxy_list)
         df_instock = get_items_in_stock(df_scraped)
         if df_instock is not None:

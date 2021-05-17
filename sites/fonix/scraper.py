@@ -80,7 +80,6 @@ def scrape(url, driver):
                 for x in stockListTextItems:
                     p = extract_integer_from_text(x.text.replace("stk.", "").strip())
                     stock = stock + int(p)
-                stock = True
             except:
                 stock = False
 
@@ -88,7 +87,7 @@ def scrape(url, driver):
             scraped_data = {
                 'title': str(title),
                 'price': int(price),
-                'stock': stock,
+                'stock': int(stock),
                 'date': now.replace("h", ":").replace("m", ""),
                 'url': str(url)
             }

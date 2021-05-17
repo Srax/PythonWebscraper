@@ -77,7 +77,7 @@ def scrape(url, driver):
             scraped_data = {
                 'title': str(title),
                 'price': int(price),
-                'stock': stock,
+                'stock': int(stock),
                 'date': now.replace("h", ":").replace("m", ""),
                 'url': str(url)
             }

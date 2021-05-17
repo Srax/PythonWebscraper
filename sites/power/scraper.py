@@ -75,9 +75,8 @@ def scrape(url, driver):
                 price = 0
             try:
                 stockList = soup.findAll("div", {"class":"stock-status__headline"})
-                #stockList = stockList[1].text.replace(".", "").replace("stk", "").replace("+", "").strip()
-                #stock = round(sum(extract_integer_from_text(stockList)))
-                stock = True
+                stockList = stockList[1].text.replace(".", "").replace("stk", "").replace("+", "").strip()
+                stock = round(sum(extract_integer_from_text(stockList)))
             except:
                 stock = False
 
@@ -85,7 +84,7 @@ def scrape(url, driver):
             scraped_data = {
                 'title': str(title),
                 'price': int(price),
-                'stock': stock,
+                'stock': int(stock),
                 'date': now.replace("h", ":").replace("m", ""),
                 'url': str(url)
             }
